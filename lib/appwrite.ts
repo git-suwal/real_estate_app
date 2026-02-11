@@ -1,11 +1,6 @@
 import * as Linking from 'expo-linking';
 import { openAuthSessionAsync } from 'expo-web-browser'; // Importing the missing function
-import {
-    Account,
-    Avatars,
-    Client,
-    OAuthProvider
-} from "react-native-appwrite";
+import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
 export const config = {
     platform: 'com.jsm.restate',
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -65,7 +60,7 @@ export async function logout() {
         return false;
     }
 }
-export async function getUser() { 
+export async function getCurrentUser() { 
     try {
         const response = await account.get();
         if(response.$id){
