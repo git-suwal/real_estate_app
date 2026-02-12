@@ -60,7 +60,8 @@ export async function logout() {
         return false;
     }
 }
-export async function getCurrentUser() { 
+export async function getCurrentUser(  _params: Record<string, string | number>
+) { 
     try {
         const response = await account.get();
         if(response.$id){

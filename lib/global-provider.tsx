@@ -2,12 +2,19 @@ import React, { createContext, ReactNode, useContext } from "react";
 import { getCurrentUser } from "./appwrite"; // Assuming this is the function to get the current user
 import { useAppwrite } from "./useAppwrite"; // Assuming you have a custom hook for Appwrite
 
-// Define the type for the GlobalContext
+
+interface User{
+  $id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}
+
 interface GlobalContextType {
-  isLogged: boolean;
-  user: any; // Replace `any` with the actual user type if available
+  isLoggedIn: boolean;
+  user: User | null;
   loading: boolean;
-  refetch: (newParams: Record<string, string | number>) => Promise<void>;
+  refetch: (newParams?: Record<string, string | number>) => Promise<void>;
 }
 
 // Create the GlobalContext
@@ -18,13 +25,16 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const {
     data: user,
     loading,
-    refetch,
-  } = useAppwrite({
+    refetch: rawRefetch,
+  } = useAppwrite<User | null, Record<string, never>>({
     fn: getCurrentUser,
+    params: {},
   });
+  const refetch = () => rawRefetch({});
+
 
   // Determine if the user is logged in
-  const isLogged = !!user;
+  const isLoggedIn = !!user;
 
   // Debugging: Log the user data
   console.log(JSON.stringify(user, null, 2));
@@ -32,7 +42,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   return (
     <GlobalContext.Provider
       value={{
-        isLogged,
+        isLoggedIn,
         user,
         loading,
         refetch,
@@ -44,10 +54,12 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // Custom hook to use the GlobalContext
-export const useGlobalContext = () => {
+export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (!context) {
     throw new Error("useGlobalContext must be used within a GlobalProvider");
   }
   return context;
 };
+
+export default GlobalProvider;
