@@ -16,8 +16,8 @@ interface UseAppwriteReturn<T, P> {
 }
 
 export const useAppwrite = <T, P extends Record<string, string | number>>({
-  fn,
-  params = {} as P,
+  fn, //The async function that will fetch data from Appwrite, which should return a promise that resolves to the data of type T.
+  params = {} as P, //Default fetch parameters, which is an object of type P. This allows you to pass any necessary parameters to the fetch function when it is called.
   skip = false,
 }: UseAppwriteOptions<T, P>): UseAppwriteReturn<T, P> => {
   const [data, setData] = useState<T | null>(null);
