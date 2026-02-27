@@ -60,19 +60,24 @@ export async function logout() {
         return false;
     }
 }
-export async function getCurrentUser(  _params: Record<string, string | number>
-) { 
-    try {
+export async function getCurrentUser(
+      _params: Record<string, never> = {}
+    ) {
+      try {
         const response = await account.get();
-        if(response.$id){
-            const userAvatar = avatar.getInitials(response.name);
-            return {
-                ...response,
-                avatar: userAvatar.toString(),
-            }
-        }
-    } catch (error) {
+
+        if (!response?.$id) return null;
+
+        const userAvatar = avatar.getInitials(response.name);
+
+        return {
+          $id: response.$id,
+          name: response.name,
+          email: response.email,
+          avatar: userAvatar.toString(),
+        };
+      } catch (error) {
         console.error("Get user error:", error);
         return null;
-    }
+      }
 }
